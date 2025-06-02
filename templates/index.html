@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>N-D chat</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <script>
+    let username = prompt("Enter your name (N or D):");
+    </script>
+    
+
+    <div id="chat-box"></div>
+    <input type="text" id="msg" placeholder="Type message..." autocomplete="off">
+    <button onclick="sendMsg()">Send</button>
+    <script src="/static/chat.js"></script>
+</body>
+</html>
