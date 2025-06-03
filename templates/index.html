@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>N-D chat</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
     <script>
-    let username = prompt("Enter your name (N or D):");
+        var username = prompt("Enter your name (N or D):").toUpperCase();
+        if (username !== "N" && username !== "D") {
+            alert("Only N or D allowed");
+            document.body.innerHTML = "Access Denied";
+            throw new Error("Access blocked");
+        }
     </script>
-    
 
-    <div id="chat-box"></div>
-    <input type="text" id="msg" placeholder="Type message..." autocomplete="off">
+    <div id="chat-box" style="height:300px; overflow-y:auto;"></div>
+    <input type="text" id="msg" placeholder="Type message...">
     <button onclick="sendMsg()">Send</button>
+
     <script src="/static/chat.js"></script>
 </body>
 </html>
