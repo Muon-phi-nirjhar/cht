@@ -2,42 +2,25 @@ const socket = io();
 const chatBox = document.getElementById('chat-box');
 const msgInput = document.getElementById('msg');
 
-// Ask for username
-let username = prompt("Enter your username:").toUpperCase();
-if (username !== "N" && username !== "D") {
-    alert("Not allowed. Only N or D");
-    document.body.innerHTML = "Access Denied";
-    throw new Error("Access blocked");
-}
-
-socket.on('message', (data) => {
+function appendMessage(data) {
     const p = document.createElement('p');
     const label = data.user === "N" ? "🟦 N" : "🟥 D";
     p.innerHTML = `<strong>${label}:</strong> ${data.text}`;
     chatBox.appendChild(p);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-    // Notify server the message was seen (if from other user)
-    if (data.user !== username) {
-        socket.emit('seen', { from: data.user, by: username });
-    }
+socket.on('load_messages', (msgs) => {
+    chatBox.innerHTML = '';
+    msgs.forEach(appendMessage);
 });
 
-socket.on('seen-notify', (data) => {
-    const p = document.createElement('p');
-    p.style.fontStyle = "italic";
-    p.style.color = "gray";
-    p.textContent = `✔ Seen by ${data.by}`;
-    chatBox.appendChild(p);
-});
+socket.on('message', appendMessage);
 
 function sendMsg() {
-    const msg = msgInput.value;
-    if (msg.trim() === "") return;
+    const msg = msgInput.value.trim();
+    if (!msg) return;
 
-    socket.emit('message', {
-        user: username,
-        text: msg
-    });
-
+    socket.emit('message', { user: username, text: msg });
     msgInput.value = '';
 }
