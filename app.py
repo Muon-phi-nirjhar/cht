@@ -1,11 +1,11 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send
 import eventlet
-eventlet.monkey_patch()  # Important for eventlet
+eventlet.monkey_patch()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'chatsecret!'
-socketio = SocketIO(app, async_mode='eventlet')
+socketio = SocketIO(app, async_mode='eventlet')  # Use eventlet
 
 @app.route('/')
 def index():
