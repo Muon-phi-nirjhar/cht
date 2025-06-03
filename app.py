@@ -1,50 +1,28 @@
 from flask import Flask, render_template
-from flask_socketio import SocketIO, send, emit
-import json
-import os
+from flask_socketio import SocketIO, emit
 import eventlet
 
 eventlet.monkey_patch()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'chatsecret!'
+app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode='eventlet')
 
-MESSAGES_FILE = 'messages.json'
-
-# Load messages from file
-def load_messages():
-    if os.path.exists(MESSAGES_FILE):
-        with open(MESSAGES_FILE, 'r') as f:
-            return json.load(f)
-    return []
-
-# Save messages to file
-def save_messages(messages):
-    with open(MESSAGES_FILE, 'w') as f:
-        json.dump(messages, f)
+# 🧠 Store messages in memory
+messages = []
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @socketio.on('connect')
-def on_connect():
-    print("A user connected.")
-    previous_messages = load_messages()
-    emit('load_messages', previous_messages)
+def handle_connect():
+    emit('load_messages', messages)
 
 @socketio.on('message')
-def handleMessage(data):
-    print(f"{data['user']}: {data['text']}")
-    
-    # Load, append, save
-    messages = load_messages()
+def handle_message(data):
     messages.append(data)
-    save_messages(messages)
-
-    socketio.emit('message', data, broadcast=True)
-
+    emit('message', data, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)
